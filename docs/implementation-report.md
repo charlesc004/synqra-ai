@@ -1,6 +1,6 @@
 # Implementation and verification report
 
-Date: 24 October 2026. Workspace: `Synqra AI Platform`. Updated after the full local test-stack run; see [test report](testing-report.md).
+Initial implementation snapshot: 24 October 2026. Workspace: `Synqra AI Platform`. This document records the original implementation and its outstanding product requirements. The [current test report](testing-report.md), [comprehensive audit](comprehensive-audit.md) and [security hardening follow-up](security-hardening.md) supersede its historical verification counts, accessibility status and CSP hardening notes.
 
 ## Delivered
 
