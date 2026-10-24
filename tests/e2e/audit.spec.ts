@@ -28,6 +28,18 @@ test("responsive accessibility audit of workspace, settings tabs and dialogs", a
     }
   });
   await signIn(page);
+  // Fresh CI databases have no measured usage yet. Create it through the real
+  // fixture-backed chat path before asserting that the usage chart is rendered.
+  await page.goto("/knowledge");
+  await page.getByRole("textbox", { name: "Find a document by name…" }).fill("remote-work-policy.md");
+  await expect(
+    page.getByRole("row").filter({ hasText: "remote-work-policy.md" }).getByText("ready", { exact: true }),
+  ).toBeVisible({ timeout: 60000 });
+  await page.goto("/chat");
+  await page.getByRole("textbox", { name: "Message SYNQRA" }).fill("What is the remote-work policy?");
+  await page.getByRole("button", { name: "Send message" }).click();
+  await expect(page.locator(".message-assistant .markdown")).toContainText("Controlled test answer");
+  await expect(page.locator(".message-sources .source-citation").first()).toBeVisible();
   await mkdir("test-reports/audit", { recursive: true });
   async function inspect(name: string) {
     const source = await readFile(require.resolve("axe-core/axe.min.js"), "utf8");

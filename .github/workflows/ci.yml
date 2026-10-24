@@ -63,6 +63,7 @@ jobs:
       MODEL_SUPPORTS_TOOLS: "true"
       SEED_PASSWORD: ci-fixture-password-2026
       APP_ORIGIN: http://localhost:3000
+      TEST_MODE: "true"
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
