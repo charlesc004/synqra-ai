@@ -14,7 +14,7 @@ and turning insights into human-approved actions.
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-pgvector-4169E1?logo=postgresql)
 ![LangGraph](https://img.shields.io/badge/Agents-LangGraph-1C3C3C)
 
-[Quick start](#quick-start) · [Architecture](#architecture) · [How RAG works](#how-rag-works) · [Agent workflows](#agent-workflows) · [Testing](#testing-and-verification) · [Documentation](#documentation)
+[Gallery](#product-gallery) · [Quick start](#quick-start) · [Architecture](#architecture) · [How RAG works](#how-rag-works) · [Agent workflows](#agent-workflows) · [Testing](#testing-and-verification) · [Documentation](#documentation)
 
 </div>
 
@@ -43,15 +43,50 @@ an explicitly labeled deterministic HTTP fixture.
 | Workspace administration | Manage memberships and roles, inspect model status, view measured usage and audit events, change account credentials |
 | Responsive interface | Dark navigation, mobile drawer, keyboard focus management, reduced-motion support and a galaxy-inspired authentication screen |
 
-<details>
-<summary><strong>Workspace overview screenshot</strong></summary>
+## Product gallery
 
-![SYNQRA AI workspace overview with fictional test data](docs/assets/workspace.png)
+Explore the six core areas of SYNQRA AI. Select any preview to open the original
+**3840 x 2160 PNG**. These screenshots show the running application with fictional
+Northstar data; the visible banner identifies the controlled test model.
 
-The banner identifies the controlled test model. Counts, history and documents in
-this screenshot belong to fictional test data, not a deployed customer workspace.
-
-</details>
+<table>
+  <tr>
+    <td width="50%" valign="top">
+      <h3>01 &middot; Workspace overview</h3>
+      <a href="docs/assets/screenshots/01-dashboard.png"><img src="docs/assets/screenshots/01-dashboard.png" alt="SYNQRA AI dashboard with workspace metrics and knowledge shortcuts" width="100%"></a>
+      <p>A central view of indexed knowledge, collections, conversations and open actions, with shortcuts into the workspace.</p>
+    </td>
+    <td width="50%" valign="top">
+      <h3>02 &middot; AI chat and citations</h3>
+      <a href="docs/assets/screenshots/02-ai-chat-and-citations.png"><img src="docs/assets/screenshots/02-ai-chat-and-citations.png" alt="SYNQRA AI conversation with a cited answer and connected source card" width="100%"></a>
+      <p>Persistent conversations pair grounded answers with connected source cards and a scoped message composer.</p>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
+      <h3>03 &middot; Knowledge base</h3>
+      <a href="docs/assets/screenshots/03-knowledge-base.png"><img src="docs/assets/screenshots/03-knowledge-base.png" alt="SYNQRA AI knowledge library showing collections, policy documents and indexing status" width="100%"></a>
+      <p>Organize collections, find documents, inspect indexing status and manage the evidence available to your workspace.</p>
+    </td>
+    <td width="50%" valign="top">
+      <h3>04 &middot; Agent workflows</h3>
+      <a href="docs/assets/screenshots/04-agent-workflows.png"><img src="docs/assets/screenshots/04-agent-workflows.png" alt="SYNQRA AI agent workspace with five workflows, source selection and run activity" width="100%"></a>
+      <p>Research, summarize, compare, extract and propose actions through explicit workflows with source selection and human approval for writes.</p>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
+      <h3>05 &middot; Action items</h3>
+      <a href="docs/assets/screenshots/05-action-items.png"><img src="docs/assets/screenshots/05-action-items.png" alt="SYNQRA AI action board with to-do, in-progress and completed columns" width="100%"></a>
+      <p>Follow approved insights through to-do, in-progress and completed states, with source references and due-date information.</p>
+    </td>
+    <td width="50%" valign="top">
+      <h3>06 &middot; Evaluations and usage</h3>
+      <a href="docs/assets/screenshots/06-evaluations-and-usage.png"><img src="docs/assets/screenshots/06-evaluations-and-usage.png" alt="SYNQRA AI evaluations page with retrieval metrics, measured usage and benchmark runs" width="100%"></a>
+      <p>Inspect retrieval quality, latency, recorded AI activity and persisted benchmark results from the shared retrieval pipeline.</p>
+    </td>
+  </tr>
+</table>
 
 ## Architecture
 
