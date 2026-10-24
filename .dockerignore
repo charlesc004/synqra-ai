@@ -1,0 +1,15 @@
+node_modules
+**/node_modules
+**/.next
+**/.next-dev
+.venv
+.tmp
+.git
+.env
+storage
+**/__pycache__
+**/*.egg-info
+**/.pytest_cache
+test-results
+test-reports
+playwright-report

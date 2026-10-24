@@ -1,0 +1,95 @@
+# Isolated local/CI system-test stack. The model service is a deterministic fixture, not a live AI model.
+name: synqra-test
+x-api-environment: &api-environment
+  DATABASE_URL: postgresql+psycopg://synqra:test-only@postgres:5432/synqra_test
+  TEST_DATABASE_URL: postgresql+psycopg://synqra:test-only@postgres:5432/synqra_test
+  REDIS_URL: redis://redis:6379/0
+  STORAGE_PATH: /workspace/storage
+  APP_ORIGIN: http://localhost:3010
+  AI_PROVIDER: openai
+  CHAT_MODEL: controlled-fixture
+  OPENAI_API_KEY: fixture-only-not-a-real-key
+  OPENAI_BASE_URL: http://model-fixture:9000/v1
+  EMBEDDING_PROVIDER: openai
+  EMBEDDING_MODEL: controlled-fixture-embeddings
+  EMBEDDING_DIMENSION: "768"
+  MODEL_SUPPORTS_STRUCTURED: "true"
+  MODEL_SUPPORTS_TOOLS: "true"
+  SEED_PASSWORD: ci-fixture-password-2026
+  TEST_MODE: "true"
+  PYTHONPATH: /workspace/apps/api
+services:
+  postgres:
+    image: pgvector/pgvector:pg17
+    environment: {POSTGRES_USER: synqra, POSTGRES_PASSWORD: test-only, POSTGRES_DB: synqra_test}
+    ports: ["127.0.0.1:15432:5432"]
+    volumes: ["postgres_test:/var/lib/postgresql/data"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U synqra -d synqra_test"]
+      interval: 3s
+      retries: 20
+  redis:
+    image: redis:7-alpine
+    ports: ["127.0.0.1:16379:6379"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 3s
+      retries: 20
+  migrate:
+    image: synqra-test-api:local
+    build: {context: .., dockerfile: apps/api/Dockerfile}
+    environment: *api-environment
+    command: ["sh", "-c", "alembic -c apps/api/alembic.ini upgrade head && python apps/api/scripts/init_checkpoints.py"]
+    depends_on:
+      postgres: {condition: service_healthy}
+  model-fixture:
+    image: synqra-test-api:local
+    environment: *api-environment
+    volumes: ["./:/workspace/tests:ro"]
+    command: ["uvicorn", "tests.fixtures.provider:app", "--host", "0.0.0.0", "--port", "9000"]
+  api:
+    image: synqra-test-api:local
+    environment: *api-environment
+    ports: ["127.0.0.1:8010:8000"]
+    volumes:
+      - document_test:/workspace/storage
+      - ../apps/api/app:/workspace/apps/api/app:ro
+      - ../apps/api/tests:/workspace/apps/api/tests:ro
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+      redis: {condition: service_healthy}
+      model-fixture: {condition: service_started}
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/v1/ready', timeout=8)"]
+      interval: 5s
+      timeout: 10s
+      retries: 20
+  worker:
+    image: synqra-test-api:local
+    restart: unless-stopped
+    environment: *api-environment
+    volumes:
+      - document_test:/workspace/storage
+      - ../apps/api/app:/workspace/apps/api/app:ro
+    command: ["python", "-m", "app.worker"]
+    depends_on:
+      api: {condition: service_healthy}
+  web:
+    build: {context: .., dockerfile: apps/web/Dockerfile}
+    ports: ["127.0.0.1:3010:3000"]
+    depends_on:
+      api: {condition: service_healthy}
+  checks:
+    profiles: ["checks"]
+    build: {context: .., dockerfile: tests/Dockerfile}
+    environment: *api-environment
+    volumes:
+      - ../apps/api/app:/workspace/apps/api/app:ro
+      - ../apps/api/tests:/workspace/apps/api/tests:ro
+      - ../test-reports:/reports
+    command: ["python", "-m", "pytest", "apps/api/tests", "-q", "-o", "cache_dir=/tmp/synqra-pytest-cache", "--junitxml=/reports/backend.xml"]
+    depends_on:
+      api: {condition: service_healthy}
+volumes:
+  postgres_test:
+  document_test:

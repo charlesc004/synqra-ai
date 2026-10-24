@@ -1,0 +1,416 @@
+/* The galaxy belongs to authentication only; the workspace stays monochrome. */
+.auth-page {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: #06080f;
+}
+.cosmic-scene {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  overflow: hidden;
+  contain: paint;
+}
+.cosmic-nebula {
+  position: absolute;
+  width: 65%;
+  height: 65%;
+  border-radius: 50%;
+  filter: blur(65px);
+  opacity: 0.35;
+  will-change: transform;
+}
+.cosmic-nebula-blue {
+  left: -24%;
+  top: 22%;
+  background: radial-gradient(ellipse, #1f5f9c, #172a67 45%, transparent 70%);
+  animation: nebula-drift 28s ease-in-out infinite alternate;
+}
+.cosmic-nebula-violet {
+  left: 18%;
+  bottom: -28%;
+  background: radial-gradient(ellipse, #65408a, #342653 40%, transparent 70%);
+  animation: nebula-drift 34s ease-in-out -12s infinite alternate-reverse;
+}
+.cosmic-stars {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.8;
+}
+.cosmic-star-layer {
+  animation: star-breathe 7s ease-in-out infinite alternate;
+}
+.cosmic-star-layer-1 {
+  animation-delay: -3s;
+  animation-duration: 9s;
+}
+.cosmic-star-layer-2 {
+  animation-delay: -6s;
+  animation-duration: 11s;
+}
+.cosmic-constellation {
+  opacity: 0.17;
+}
+.cosmic-meteor {
+  opacity: 0;
+}
+.cosmic-meteor-one {
+  animation: meteor-pass 17s ease-out 3s infinite;
+}
+.cosmic-meteor-two {
+  animation: meteor-pass 23s ease-out 11s infinite;
+}
+.cosmic-system {
+  position: absolute;
+  left: 25%;
+  top: 77%;
+  width: 370px;
+  height: 370px;
+  transform: translate(-50%, -50%) rotate(-24deg);
+}
+.cosmic-halo {
+  position: absolute;
+  inset: -25%;
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse,
+    #5c84cd24,
+    #684c9620 30%,
+    transparent 66%
+  );
+  animation: halo-breathe 13s ease-in-out infinite alternate;
+}
+.cosmic-planet {
+  position: absolute;
+  inset: 22%;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 30% 24%, #99b9d43d, transparent 45%),
+    radial-gradient(circle at 32% 28%, #253c55, #101b2c 43%, #050811 72%);
+  box-shadow:
+    inset 2px 3px 4px #bbddffb3,
+    inset 8px 12px 30px #7fafe333,
+    0 0 24px #5778c933,
+    0 0 90px #5478b91a;
+}
+.cosmic-ring {
+  position: absolute;
+  left: 0;
+  top: 34%;
+  width: 100%;
+  height: 32%;
+  border-radius: 50%;
+  border: 1px solid #a3c4f586;
+  box-shadow:
+    0 2px 5px #c6d8ff33,
+    inset 0 -3px 5px #b9c9ff42,
+    0 0 0 5px #819dcb0d,
+    0 0 0 11px #8f9fc31a,
+    0 0 0 16px #9cbaff0a;
+  transform: rotate(-7deg);
+  mask-image: linear-gradient(transparent 0%, #000 48%);
+}
+.cosmic-orbit {
+  position: absolute;
+  border: 1px solid #b4caff20;
+  border-radius: 50%;
+}
+.cosmic-orbit-outer {
+  inset: -4%;
+  animation: orbit-turn 65s linear infinite;
+}
+.cosmic-orbit-inner {
+  inset: 10%;
+  border-style: dashed;
+  border-color: #b4caff17;
+  animation: orbit-turn 48s linear infinite reverse;
+}
+.cosmic-orbit > span {
+  position: absolute;
+  top: 50%;
+  left: -3px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #c5d9ff;
+  box-shadow: 0 0 12px #aacbff;
+}
+.cosmic-orbit-inner > span {
+  width: 3px;
+  height: 3px;
+  left: -2px;
+  background: #b4a9e5;
+}
+.cosmic-starburst {
+  position: absolute;
+  right: 5%;
+  top: 15%;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #e0ecff;
+  box-shadow: 0 0 16px 4px #bed6ff45;
+  animation: star-breathe 5s ease-in-out infinite alternate;
+}
+.cosmic-starburst::before,
+.cosmic-starburst::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  background: linear-gradient(transparent, #deecff, transparent);
+  transform: translate(-50%, -50%);
+}
+.cosmic-starburst::before {
+  width: 1px;
+  height: 24px;
+}
+.cosmic-starburst::after {
+  width: 24px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #deecff, transparent);
+}
+.cosmic-vignette {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      90deg,
+      #06080f0d,
+      transparent 40%,
+      #06080f66 63%,
+      #06080f33
+    ),
+    linear-gradient(#06080f22, transparent 65%, #06080f66);
+}
+.auth-story {
+  background: transparent;
+  border-color: #c6d6ff12;
+}
+.auth-story > .brand,
+.auth-story-content,
+.auth-story-footer {
+  position: relative;
+  z-index: 1;
+}
+.auth-story-content {
+  padding: 45px 0 220px;
+}
+.auth-story h1 {
+  font-size: clamp(36px, 3.8vw, 56px);
+  text-shadow: 0 3px 28px #0008;
+}
+.auth-story h1 em {
+  color: #b4c9e7;
+}
+.auth-story-content > p {
+  color: #b4bdcd;
+  text-shadow: 0 2px 14px #000;
+}
+.auth-story .eyebrow {
+  color: #adc2dc;
+}
+.auth-story .status-dot {
+  background: #b8d8ff;
+  box-shadow: 0 0 10px #9dcaff80;
+}
+.auth-story-footer {
+  color: #95a2b8;
+}
+.auth-promises {
+  color: #bac6d8;
+  margin-top: 28px;
+  gap: 10px;
+}
+.auth-promises svg {
+  color: #bad0ee;
+}
+.auth-form-side {
+  background: #070a104a;
+}
+.auth-form-wrap {
+  max-width: 440px;
+  padding: 34px;
+  border: 1px solid #bbd2ff26;
+  border-radius: 24px;
+  background: linear-gradient(145deg, #141b29eb, #0c101bd9);
+  backdrop-filter: blur(20px);
+  box-shadow:
+    0 24px 80px #0004,
+    inset 0 1px #e2eaff09;
+}
+.auth-form-wrap > .eyebrow {
+  color: #a8bad2;
+}
+.auth-form-wrap > .muted {
+  color: #b4bdcc;
+}
+.auth-form-wrap input {
+  background: #0a0f1ac7;
+  border-color: #3b465a;
+}
+.auth-form-wrap input:focus {
+  border-color: #a2c8f6;
+  box-shadow: 0 0 0 3px #9bc6ff14;
+}
+.auth-form-wrap input::placeholder {
+  color: #8f9bb0;
+}
+.auth-form-wrap .btn {
+  background: #e4edfa;
+  border-color: #e4edfa;
+  transition:
+    background 0.2s,
+    box-shadow 0.2s;
+}
+.auth-form-wrap .btn:hover {
+  background: #fff;
+  box-shadow: 0 0 26px #bad3ff25;
+}
+.auth-security {
+  color: #9baac0;
+  border-color: #9eb7e01f;
+}
+.auth-copyright {
+  color: #8d9ab0;
+}
+@keyframes nebula-drift {
+  from {
+    transform: translate3d(-3%, -2%, 0) scale(1);
+  }
+  to {
+    transform: translate3d(8%, 5%, 0) scale(1.12);
+  }
+}
+@keyframes star-breathe {
+  from {
+    opacity: 0.3;
+  }
+  to {
+    opacity: 0.9;
+  }
+}
+@keyframes halo-breathe {
+  from {
+    opacity: 0.5;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1.07);
+  }
+}
+@keyframes orbit-turn {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes meteor-pass {
+  0%,
+  82%,
+  100% {
+    opacity: 0;
+    transform: translate(140px, 300px);
+  }
+  84% {
+    opacity: 0.85;
+  }
+  90% {
+    opacity: 0;
+    transform: translate(620px, 40px);
+  }
+}
+@media (max-width: 1000px) and (min-width: 761px) {
+  .cosmic-system {
+    width: 290px;
+    height: 290px;
+    top: 80%;
+  }
+  .auth-story-content {
+    padding-bottom: 200px;
+  }
+  .auth-form-wrap {
+    padding: 26px;
+  }
+}
+@media (max-width: 760px) {
+  .auth-page {
+    min-height: 100dvh;
+  }
+  .auth-story {
+    padding: 24px 26px;
+    border-bottom: 1px solid #bbd2ff12;
+  }
+  .auth-form-side {
+    background: transparent;
+    padding: 28px 20px 74px;
+  }
+  .auth-form-wrap {
+    max-width: 420px;
+    padding: 26px;
+    border-radius: 22px;
+  }
+  .auth-form-wrap > h2 {
+    font-size: 29px;
+  }
+  .auth-form-wrap > .eyebrow {
+    font-size: 9px;
+  }
+  .cosmic-system {
+    left: 85%;
+    top: 23%;
+    width: 300px;
+    height: 300px;
+    opacity: 0.38;
+  }
+  .cosmic-nebula {
+    width: 110%;
+    height: 70%;
+    opacity: 0.28;
+    filter: blur(45px);
+  }
+  .cosmic-nebula-violet {
+    left: 15%;
+    bottom: -10%;
+  }
+  .cosmic-stars {
+    opacity: 0.6;
+  }
+  .cosmic-constellation {
+    opacity: 0.12;
+  }
+  .cosmic-meteor-two {
+    display: none;
+  }
+  .auth-security {
+    font-size: 10px;
+    gap: 5px;
+  }
+}
+@media (max-width: 360px) {
+  .auth-form-side {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+  .auth-form-wrap {
+    padding: 22px 20px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cosmic-scene *,
+  .cosmic-scene *::before,
+  .cosmic-scene *::after {
+    animation: none !important;
+    will-change: auto;
+  }
+  .cosmic-star-layer {
+    opacity: 0.65;
+  }
+  .cosmic-meteor {
+    display: none;
+  }
+}

@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=75"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "synqra-api"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = [
+ "fastapi>=0.115,<1", "uvicorn[standard]>=0.34,<1", "pydantic-settings>=2.8,<3",
+ "sqlalchemy>=2.0.38,<3", "psycopg[binary,pool]>=3.2,<4", "alembic>=1.15,<2",
+ "pgvector>=0.4,<1", "redis>=5,<7", "rq>=2.2,<3", "argon2-cffi>=23,<26",
+ "python-multipart>=0.0.20", "email-validator>=2,<3", "httpx>=0.28,<1",
+ "pypdf>=5,<7", "python-docx>=1.1,<2", "tiktoken>=0.9,<1",
+ "langgraph>=1,<2", "langgraph-checkpoint-postgres>=3,<4",
+ "langchain-openai>=1,<2", "langchain-ollama>=1,<2"
+]
+[project.optional-dependencies]
+dev = ["pytest>=8", "ruff>=0.11", "mypy>=1.15"]
+[tool.setuptools.packages.find]
+include = ["app*"]
+[tool.ruff]
+target-version = "py312"
+line-length = 110
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "I"]
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = ["integration: requires TEST_DATABASE_URL PostgreSQL with pgvector", "provider: optional real provider test"]
+[tool.mypy]
+python_version = "3.12"
+ignore_missing_imports = true
+check_untyped_defs = true

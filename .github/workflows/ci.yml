@@ -1,0 +1,101 @@
+name: SYNQRA quality
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: pgvector/pgvector:pg17
+        env: {POSTGRES_USER: synqra, POSTGRES_PASSWORD: test, POSTGRES_DB: synqra}
+        ports: ["5432:5432"]
+        options: --health-cmd "pg_isready -U synqra" --health-interval 5s --health-retries 12
+      redis:
+        image: redis:7-alpine
+        ports: ["6379:6379"]
+    env:
+      DATABASE_URL: postgresql+psycopg://synqra:test@localhost:5432/synqra
+      TEST_DATABASE_URL: postgresql+psycopg://synqra:test@localhost:5432/synqra
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install -e 'apps/api[dev]'
+      - run: ruff check apps/api
+      - run: mypy apps/api/app --config-file apps/api/pyproject.toml
+      - run: pytest apps/api/tests -q
+      - run: alembic -c apps/api/alembic.ini upgrade head
+      - run: python apps/api/scripts/init_checkpoints.py
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: "22", cache: npm}
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run check:english
+      - run: npm run test:frontend
+      - run: npm run typecheck
+      - run: npm run build
+  e2e:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: pgvector/pgvector:pg17
+        env: {POSTGRES_USER: synqra, POSTGRES_PASSWORD: test, POSTGRES_DB: synqra}
+        ports: ["5432:5432"]
+        options: --health-cmd "pg_isready -U synqra" --health-interval 5s --health-retries 12
+      redis:
+        image: redis:7-alpine
+        ports: ["6379:6379"]
+    env:
+      DATABASE_URL: postgresql+psycopg://synqra:test@localhost:5432/synqra
+      AI_PROVIDER: openai
+      CHAT_MODEL: controlled-fixture
+      OPENAI_API_KEY: fixture-only-not-a-real-key
+      OPENAI_BASE_URL: http://localhost:9000/v1
+      EMBEDDING_PROVIDER: openai
+      EMBEDDING_MODEL: controlled-fixture-embeddings
+      EMBEDDING_DIMENSION: "768"
+      MODEL_SUPPORTS_STRUCTURED: "true"
+      MODEL_SUPPORTS_TOOLS: "true"
+      SEED_PASSWORD: ci-fixture-password-2026
+      APP_ORIGIN: http://localhost:3000
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: "22", cache: npm}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install -e 'apps/api[dev]'
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run build
+      - run: alembic -c apps/api/alembic.ini upgrade head && python apps/api/scripts/init_checkpoints.py
+      - name: Start controlled services
+        run: |
+          uvicorn tests.fixtures.provider:app --host 127.0.0.1 --port 9000 > /tmp/fixture.log 2>&1 &
+          uvicorn app.main:app --host 127.0.0.1 --port 8000 > /tmp/api.log 2>&1 &
+          python -m app.worker > /tmp/worker.log 2>&1 &
+          npm run start -w apps/web > /tmp/web.log 2>&1 &
+          ready=0
+          for i in $(seq 1 30); do
+            if curl -sf http://localhost:8000/api/v1/ready && curl -sf http://localhost:3000/login > /dev/null; then ready=1; break; fi
+            sleep 2
+          done
+          test "$ready" = 1
+          python apps/api/scripts/seed.py
+      - run: npm run test:e2e
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: e2e-diagnostics
+          path: |
+            playwright-report
+            test-results
+            /tmp/api.log
+            /tmp/worker.log
+            /tmp/web.log
+            /tmp/fixture.log

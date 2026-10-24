@@ -1,0 +1,13 @@
+{
+  "name": "Northstar knowledge benchmark v1",
+  "cases": [
+    {"question": "What is the remote-work policy?", "relevant_filenames": ["remote-work-policy.md", "internal-faq.md"]},
+    {"question": "What are the first steps for handling a security incident?", "relevant_filenames": ["incident-response-playbook.md"]},
+    {"question": "How did access control change between policy versions?", "relevant_filenames": ["it-security-policy.md", "it-security-policy-revised.md"]},
+    {"question": "Which documents describe customer support escalation?", "relevant_filenames": ["customer-support-handbook.md", "incident-response-playbook.md", "internal-faq.md"]},
+    {"question": "How do I fix ORB-409-IDEMPOTENCY?", "relevant_filenames": ["api-integration-guide.md", "troubleshooting-guide.md"]},
+    {"question": "What follow-up actions are required after project launch?", "relevant_filenames": ["project-delivery-guidelines.md"]},
+    {"question": "How much is the CEO's personal mortgage payment?", "relevant_filenames": []},
+    {"question": "Which party signed the demonstration contract on 1 March 2026?", "relevant_filenames": []}
+  ]
+}

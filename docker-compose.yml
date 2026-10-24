@@ -1,0 +1,77 @@
+services:
+  postgres:
+    image: pgvector/pgvector:pg17
+    environment:
+      POSTGRES_USER: synqra
+      POSTGRES_DB: synqra
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-local-development-only}
+    ports: ["127.0.0.1:5432:5432"]
+    volumes: ["postgres_data:/var/lib/postgresql/data"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U synqra -d synqra"]
+      interval: 5s
+      retries: 12
+  redis:
+    image: redis:7-alpine
+    ports: ["127.0.0.1:6379:6379"]
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes: ["redis_data:/data"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      retries: 12
+  migrate:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    env_file: .env
+    environment: &backend-env
+      DATABASE_URL: postgresql+psycopg://synqra:${POSTGRES_PASSWORD:-local-development-only}@postgres:5432/synqra
+      REDIS_URL: redis://redis:6379/0
+      STORAGE_PATH: /workspace/storage
+    command: ["sh", "-c", "alembic -c apps/api/alembic.ini upgrade head && python apps/api/scripts/init_checkpoints.py"]
+    depends_on:
+      postgres: {condition: service_healthy}
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    env_file: .env
+    environment: *backend-env
+    ports: ["127.0.0.1:8000:8000"]
+    volumes: ["document_storage:/workspace/storage"]
+    extra_hosts: ["host.docker.internal:host-gateway"]
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+      redis: {condition: service_healthy}
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/v1/ready', timeout=8)"]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+  worker:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    env_file: .env
+    environment: *backend-env
+    command: ["python", "-m", "app.worker"]
+    volumes: ["document_storage:/workspace/storage"]
+    extra_hosts: ["host.docker.internal:host-gateway"]
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+      redis: {condition: service_healthy}
+    restart: unless-stopped
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    environment:
+      API_INTERNAL_URL: http://api:8000
+    ports: ["127.0.0.1:3000:3000"]
+    depends_on:
+      api: {condition: service_healthy}
+volumes:
+  postgres_data:
+  redis_data:
+  document_storage:
